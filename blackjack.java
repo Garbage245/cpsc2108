@@ -3,7 +3,7 @@ public class blackjack{
     //Things to do
     // 1) make a deck object that contains 52 cards (array)
     // 2) some type of user input (ask user if they want to hit, stand, or fold)
-    // 3) add chips to dealer and player so there's a way to win. (maybe give player an option to set amount)
+    // 3) give player and dealer 3 lives. 1 life is lost when a round is lost
     // 4) prompt player to put set an amount of chips in pot. dealer copies player value
     // 5) code ace to function as a 1 or 11. 11 when hand is <22 and 1 when total is >22
     // 6) code dealer to draw cards after player stands. dealer stops drawing when hand >17 or dealer busts
@@ -22,7 +22,10 @@ public class blackjack{
         
         public static int draw(){
             int number = (int)Math.random()*(52);
-            if (cards[number].equals("J") || cards[number].equals("Q") || cards[number].equals("K")){
+            if (cards[number] == null){
+                return 0;
+            }
+            else if (cards[number].equals("J") || cards[number].equals("Q") || cards[number].equals("K")){
                 cards[number] = null;
                 return 10;
             }
@@ -60,13 +63,14 @@ public class blackjack{
 
     //Stats for player and dealer 
     public class PlayerStats{
+        private static boolean playerPhase = true;
         private static int hand;
-        private static int chips;
+        private static int lives = 3;
     }
 
     public class DealerStats{
         private static int hand;
-        private static int chips;
+        private static int lives = 3;
     }
 
     // Uses Player and Dealer stat objects to create a score display
@@ -76,11 +80,49 @@ public class blackjack{
         }
     }
 
-    public void action(String input){}
+    public static void playerAction(String input){
+        if (!input.equals("H") && !input.equals("S")){
+            System.out.println("Invalid input. Please type H or S.\n");
+
+        }
+        else{
+            if (input.equals("H")){
+            int current = Deck.draw();
+                if (current == 0){
+                    current = Deck.draw();
+                }
+                else{
+                    PlayerStats.hand += current;
+                    // if player hand > 21 then dealer wins rounds
+                }
+            }
+            else if (input.equals("S")){
+            dealerAction();
+            }
+        }
+    }
+
+    public static void dealerAction(){
+        while (DealerStats.hand < 17){
+            DealerStats.hand += Deck.draw();
+            //Print Scoreboard
+        }
+        // if dealer hand > 21 then player wins round
+        
+    }
+    
+    public static void gameStart(){
+        // give player and dealer two cards to start
+    }
 
     public static void main(String[] args){
         Scanner helpy = new Scanner(System.in);
-        // Deck.shuffle();
-        System.out.println("Shuffle complete");
+        while (PlayerStats.playerPhase){
+            //Print ScoreBoard
+            System.out.println("Type S to stand\nType H to hit\n");
+            playerAction(helpy.nextLine());
+        }
+        dealerAction();
+        
     }
 }
