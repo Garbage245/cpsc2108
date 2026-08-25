@@ -1,5 +1,7 @@
+
 import java.util.Scanner;
-public class blackjack{
+
+public class blackjack {
     //Things to do
     // 1) make a deck object that contains 52 cards (array)
     // 2) some type of user input (ask user if they want to hit, stand, or fold)
@@ -11,118 +13,129 @@ public class blackjack{
     // 8) when player or dealer wins add pot to winner's chip counter and remove amount from loser's
     // 9) game over/won screen
     // 10) code suits if i feel like it
-    
+
     // Standard deck of playing cards using a String array of card values
-    public class Deck{
+    public class Deck {
+
         private static String[] reset = {"A", "A", "A", "A", "2", "2", "2", "2", "3", "3", "3", "3", "4", "4", "4", "4",
-                                    "5", "5", "5", "5", "6", "6", "6", "6", "7", "7", "7", "7", "8", "8", "8", "8",
-                                    "9", "9", "9", "9", "10", "10", "10", "10", "J", "J", "J", "J", "Q", "Q", "Q", "Q",
-                                    "K", "K", "K", "K"};
+            "5", "5", "5", "5", "6", "6", "6", "6", "7", "7", "7", "7", "8", "8", "8", "8",
+            "9", "9", "9", "9", "10", "10", "10", "10", "J", "J", "J", "J", "Q", "Q", "Q", "Q",
+            "K", "K", "K", "K"};
         private static String[] cards = new String[52];
-        
-        public static int draw(){
-            int number = (int)Math.random()*(52);
-            if (cards[number] == null){
+
+        public static int draw() {
+            int number = (int) (Math.random() * 52);
+            if (cards[number] == null) {
                 return 0;
-            }
-            else if (cards[number].equals("J") || cards[number].equals("Q") || cards[number].equals("K")){
+            } else if (cards[number].equals("J") || cards[number].equals("Q") || cards[number].equals("K")) {
                 cards[number] = null;
                 return 10;
-            }
-            else if (cards[number].equals("A")){
-                if (PlayerStats.hand + 11 > 21 || DealerStats.hand > 21){
+            } else if (cards[number].equals("A")) {
+                if (Player.hand + 11 > 21 || Dealer.hand > 21) {
                     cards[number] = null;
                     return 1;
-                }
-                else{
+                } else {
                     cards[number] = null;
                     return 11;
                 }
-            }
-            else{
-                int cardValue =  Integer.parseInt(cards[number]);
+            } else {
+                int cardValue = Integer.parseInt(cards[number]);
                 cards[number] = null;
                 return cardValue;
             }
         }
 
-        public static void shuffle(){
-            cards = reset;
-            String[] shuffledDeck = new String[52];
-            for (int i = 0; i < cards.length; i++){
-                int number = (int)Math.random()*(52);
-                if (shuffledDeck[number] == null){
-                    shuffledDeck[number] = cards[i];
+        public static void shuffle(String[] deck) {
+            int backHalf = 51;
+            int frontHalf = 0;
+            int num;
+            String[] newDeck = new String[52];
+            for (int i = 0; i < deck.length; i++) {
+                num = (int) (Math.random() * 10000);
+                if (num % 6 == 0 || num % 7 == 0 || num % 8 == 0 || num % 9 == 0){
+                    newDeck[frontHalf] = deck[i];
+                    frontHalf += 1;
                 }
-                else{
-                    i--;
+                else if (num % 1 == 0|| num % 2 == 0 || num % 3 == 0 || num % 4 == 0 || num % 5 == 0){
+                    newDeck[backHalf] = deck[i];
+                    backHalf -= 1;
                 }
             }
+            Deck.cards = newDeck;
         }
     }
 
     //Stats for player and dealer 
-    public class PlayerStats{
+    public class Player {
         private static boolean playerPhase = true;
-        private static int hand;
+        private static int hand = 0;
         private static int lives = 3;
     }
 
-    public class DealerStats{
-        private static int hand;
+    public class Dealer {
+        private static int hand = 0;
         private static int lives = 3;
     }
 
-    // Uses Player and Dealer stat objects to create a score display
-    public class ScoreBoard{
-        public ScoreBoard(PlayerStats player, DealerStats dealer){
+    // Uses Player and Dealer objects to create a score display
+    public class ScoreBoard {
+
+        public ScoreBoard(Player player, Dealer dealer) {
+            String display = "";
 
         }
     }
 
-    public static void playerAction(String input){
-        if (!input.equals("H") && !input.equals("S")){
+    public static void playerAction(String input) {
+        if (!input.equals("H") && !input.equals("S")) {
             System.out.println("Invalid input. Please type H or S.\n");
-
-        }
-        else{
-            if (input.equals("H")){
-            int current = Deck.draw();
-                if (current == 0){
+        } else {
+            if (input.equals("H")) {
+                int current = Deck.draw();
+                if (current == 0) {
                     current = Deck.draw();
-                }
-                else{
-                    PlayerStats.hand += current;
+                } else {
+                    Player.hand += current;
                     // if player hand > 21 then dealer wins rounds
                 }
             }
-            else if (input.equals("S")){
-            dealerAction();
+            else if (input.equals("S")) {
+                Player.playerPhase = false;
+                // dealerAction();
+            }
+            else if (input.equals("F")) {
+                // Start new round
+                // Call game start
             }
         }
     }
 
-    public static void dealerAction(){
-        while (DealerStats.hand < 17){
-            DealerStats.hand += Deck.draw();
+    public static void dealerAction() {
+        while (Dealer.hand < 17) {
+            Dealer.hand += Deck.draw();
             //Print Scoreboard
         }
         // if dealer hand > 21 then player wins round
-        
+
     }
-    
-    public static void gameStart(){
+
+    public static void gameStart() {
+        // shuffle deck
         // give player and dealer two cards to start
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Scanner helpy = new Scanner(System.in);
-        while (PlayerStats.playerPhase){
-            //Print ScoreBoard
-            System.out.println("Type S to stand\nType H to hit\n");
-            playerAction(helpy.nextLine());
+        // while (Player.playerPhase){
+        //     //Print ScoreBoard
+        //     System.out.println("Type S to stand\nType H to hit\nType F to fold");
+        //     playerAction(helpy.nextLine());
+        // }
+        // dealerAction();
+        Deck.shuffle(Deck.reset);
+        for (int i = 0; i < Deck.cards.length; i ++){
+            System.out.println(Deck.cards[i]);
         }
-        dealerAction();
-        
+
     }
 }
