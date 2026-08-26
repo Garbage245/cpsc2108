@@ -22,6 +22,9 @@ public class blackjack{
             "K", "K", "K", "K"};
         private static String[] cards = new String[52];
 
+        // Generates a random number 0-51 and uses it as an index for the cards array
+        // Returns corresponding value of the card and replaces the value in array with null to represent the card being drawn
+        // If an ace is drawn, the value added to hand is 11 if hand+11 < 21, otherwise the value added is 1
         public static int draw(Gambler name){
             int number = (int) (Math.random() * 52);
             if (cards[number] == null){
@@ -47,6 +50,10 @@ public class blackjack{
             }
         }
 
+        // Uses the base deck values as input
+        // Loops through base deck array to shuffle values into cards array
+        // Randomly generates a number between 0-10000 
+        // Depending on what number can divide num, a value from base is inserted into the front or back of cards
         public static void shuffle(String[] deck){
             int backHalf = 51;
             int frontHalf = 0;
@@ -80,34 +87,37 @@ public class blackjack{
         public boolean playerPhase = true;
         public Gambler player;
         public Gambler dealer;
+        
+        // Instantiates with references to player and dealer objects
         public ScoreBoard(Gambler p, Gambler d){
             player = p;
             dealer = d;
         }
 
+        // Gives player two cards to start
+        // Dealer gets 1 card to represent the player only being able to see one of the dealer's cards during their phase
         public void gameStart(Gambler p, Gambler d){
         Deck.shuffle(Deck.base);
         player.hand = Deck.draw(p) + Deck.draw(p);
         dealer.hand = Deck.draw(d);
-        // give player and dealer two cards to start
+        
         }
 
+        // Creates a display of player and dealer stats
         public String display(){
             String output = "Player\t\t\t\tDealer\n" +
                             "Lives: " + player.lives + "\t\t\t" + "Lives: " + dealer.lives +
                             "\nHand: " + player.hand + "\t\t\t" + "Hand: " + dealer.hand;
             return output;
         }
-
-        public boolean getPhase(){
-            return playerPhase;
-        }
-
-        public void setPhase(boolean input){
-            playerPhase = input;
-        }
     }
 
+
+    // Performs an action depending on player's input
+    // Draw a card from the deck
+    // Stand and end player phase
+    // Fold and restart the round without losing a life
+    // If player hand = 21, player automatically wins
     public static void playerAction(String input, Gambler name, ScoreBoard board){
         if (!input.equals("H") && !input.equals("S") && !input.equals("F")){
             System.out.println("Invalid input. Please type H, S. or F.\n");
@@ -122,7 +132,7 @@ public class blackjack{
                 }
             }
             else if (input.equals("S")){
-                board.setPhase(false);
+                board.playerPhase = false;
             }
             else if (input.equals("F")){
                 board.gameStart(board.player, board.dealer);
@@ -131,12 +141,12 @@ public class blackjack{
         }
     }
 
+    // Dealer draws cards until hand > 17
+    // If hand > 21, player wins round and dealer loses a life
     public void dealerAction(Gambler name){
         while (name.hand < 17){
             name.hand += Deck.draw(name);
         }
-        // if dealer hand > 21 then player wins round
-
     }
 
 
