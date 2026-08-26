@@ -75,15 +75,14 @@ public class blackjack{
     }
 
     //Stats for player and dealer 
-    public class Gambler{
+    public static class Gambler{
         private int hand = 0;
         private int lives = 3;
     }
 
-
     // Uses Gambler objects to create a score display for player and dealer
     // Keeps track of phase
-    public class ScoreBoard{
+    public static class ScoreBoard{
         public boolean playerPhase = true;
         public Gambler player;
         public Gambler dealer;
@@ -143,14 +142,14 @@ public class blackjack{
 
     // Dealer draws cards until hand > 17
     // If hand > 21, player wins round and dealer loses a life
-    public void dealerAction(Gambler name){
+    public static void dealerAction(Gambler name){
         while (name.hand < 17){
             name.hand += Deck.draw(name);
         }
     }
 
 
-    public void main(String[] args){
+    public static void main(String[] args){
         Scanner helpy = new Scanner(System.in);
         Gambler player = new Gambler();
         Gambler dealer = new Gambler();
