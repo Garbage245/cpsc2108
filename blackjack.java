@@ -16,7 +16,8 @@ public class blackjack{
 
     // Standard deck of playing cards using a String array of card values
     public class Deck{
-        private static String[] base = {"A", "A", "A", "A", "2", "2", "2", "2", "3", "3", "3", "3", "4", "4", "4", "4",
+        private static String[] base = {
+            "A", "A", "A", "A", "2", "2", "2", "2", "3", "3", "3", "3", "4", "4", "4", "4",
             "5", "5", "5", "5", "6", "6", "6", "6", "7", "7", "7", "7", "8", "8", "8", "8",
             "9", "9", "9", "9", "10", "10", "10", "10", "J", "J", "J", "J", "Q", "Q", "Q", "Q",
             "K", "K", "K", "K"};
@@ -78,12 +79,55 @@ public class blackjack{
     public static class Gambler{
         private int hand = 0;
         private int lives = 3;
+
+        // Performs an action depending on player's input
+        // Draw a card from the deck
+        // Stand and end player phase
+        // Fold and restart the round without losing a life
+        // If player hand = 21, player automatically wins
+        // If player hand > 21, player busts and loses round
+        public void playerAction(String input, Gambler name, ScoreBoard board){
+            if (!input.equals("H") && !input.equals("S") && !input.equals("F")){
+                System.out.println("Invalid input. Please type H, S. or F.\n");
+            }
+            else{
+                if (input.equals("H")){
+                    int current = Deck.draw(name);
+                    while (current == 0){
+                        current = Deck.draw(name);
+                    }
+                    name.hand += current;
+                    if (name.hand > 21 || name.hand == 21){
+                        board.playerPhase = false;
+                    }
+                    }
+                else if (input.equals("S")){
+                    board.playerPhase = false;
+                }
+                else if (input.equals("F")){
+                    board.roundStart(board.player, board.dealer);
+                }
+            }
+        }
+
+        // Dealer draws cards until hand > 17
+        public void dealerAction(Gambler name){
+            while (name.hand < 17){
+                int current = Deck.draw(name);
+                while (current == 0){
+                    current = Deck.draw(name);
+                }
+                name.hand += current;
+            }
+        }
     }
+
 
     // Uses Gambler objects to create a score display for player and dealer
     // Keeps track of phase
     public static class ScoreBoard{
         public boolean playerPhase = true;
+        public boolean gameStatus = true;
         public Gambler player;
         public Gambler dealer;
         
@@ -95,76 +139,78 @@ public class blackjack{
 
         // Gives player two cards to start
         // Dealer gets 1 card to represent the player only being able to see one of the dealer's cards during their phase
-        public void gameStart(Gambler p, Gambler d){
-        Deck.shuffle(Deck.base);
-        player.hand = Deck.draw(p) + Deck.draw(p);
-        dealer.hand = Deck.draw(d);
+        // If player draws a 10 and an A on round start, they win
+        public void roundStart(Gambler p, Gambler d){
+            playerPhase = true;
+            Deck.shuffle(Deck.base);
+            player.hand = Deck.draw(p) + Deck.draw(p);
+            dealer.hand = Deck.draw(d);
+            if (player.hand == 21){
+                playerPhase = false;
+            }
         
+        }
+
+        // Handles results at end of round and ends the game when a life counters hits 0
+        public void roundResults(){
+            System.out.println(display());
+            if (dealer.hand > player.hand && dealer.hand < 21 || dealer.hand < player.hand && player.hand > 21){
+                player.lives -= 1;
+                System.out.println("Dealer wins round\nPlayer loses a life" +
+                                    "\n-----------------------------------------");
+                playerPhase = true;
+            }
+            else if (player.hand > dealer.hand && player.hand <= 21 || player.hand < dealer.hand && dealer.hand > 21){
+                dealer.lives -= 1;
+                System.out.println("Player wins round\nDealer loses a life" +
+                                    "\n-----------------------------------------");
+                playerPhase = true;
+            }
+            else if (player.hand == dealer.hand){
+                System.out.println("Draw\nNo one loses a life" +
+                                    "\n-----------------------------------------");
+                playerPhase = true;
+            }
+            if (dealer.lives == 0){
+                gameStatus = false;
+                System.out.println("Game Won");
+            }
+            else if (player.lives == 0){
+                gameStatus = false;
+                System.out.println("Game Over");
+            }
         }
 
         // Creates a display of player and dealer stats
         public String display(){
             String output = "Player\t\t\t\tDealer\n" +
                             "Lives: " + player.lives + "\t\t\t" + "Lives: " + dealer.lives +
-                            "\nHand: " + player.hand + "\t\t\t" + "Hand: " + dealer.hand;
+                            "\nHand: " + player.hand + " \t\t\t" + "Hand: " + dealer.hand + 
+                            "\n-----------------------------------------";
             return output;
         }
     }
 
 
-    // Performs an action depending on player's input
-    // Draw a card from the deck
-    // Stand and end player phase
-    // Fold and restart the round without losing a life
-    // If player hand = 21, player automatically wins
-    public static void playerAction(String input, Gambler name, ScoreBoard board){
-        if (!input.equals("H") && !input.equals("S") && !input.equals("F")){
-            System.out.println("Invalid input. Please type H, S. or F.\n");
-        } else {
-            if (input.equals("H")) {
-                int current = Deck.draw(name);
-                if (current == 0) {
-                    current = Deck.draw(name);
-                } else {
-                    name.hand += current;
-                    // if player hand > 21 then dealer wins rounds
-                }
-            }
-            else if (input.equals("S")){
-                board.playerPhase = false;
-            }
-            else if (input.equals("F")){
-                board.gameStart(board.player, board.dealer);
-                // Start new round
-            }
-        }
-    }
-
-    // Dealer draws cards until hand > 17
-    // If hand > 21, player wins round and dealer loses a life
-    public static void dealerAction(Gambler name){
-        while (name.hand < 17){
-            name.hand += Deck.draw(name);
-        }
-    }
-
+  
 
     public static void main(String[] args){
         Scanner helpy = new Scanner(System.in);
         Gambler player = new Gambler();
         Gambler dealer = new Gambler();
         ScoreBoard board = new ScoreBoard(player, dealer);
-        board.gameStart(player, dealer);
-        while (board.playerPhase){
-            //Print ScoreBoard
-            System.out.println("Type S to stand\nType H to hit\nType F to fold");
-            playerAction(helpy.nextLine().toUpperCase(), player, board);
+        while (board.gameStatus){
+            board.roundStart(player, dealer);
+            while (board.playerPhase){
+                System.out.println(board.display());
+                System.out.println("Type S to stand\nType H to hit\nType F to fold");
+                player.playerAction(helpy.nextLine().toUpperCase(), player, board);
+            }
+            if (player.hand < 21){
+                dealer.dealerAction(dealer);
+            }
+            board.roundResults();
         }
-        dealerAction(dealer);
-        System.out.println(player.hand);
-        System.out.println(dealer.hand);
-        System.out.println(board.display());
-        System.out.println("Complete");
     }
 }
 
