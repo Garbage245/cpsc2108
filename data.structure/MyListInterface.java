@@ -1,4 +1,4 @@
-package blanchin;
+package data.structue;
 public class MyListInterface<E>{
     public interface new{
         public void add();

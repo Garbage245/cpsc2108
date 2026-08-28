@@ -1,4 +1,4 @@
-package blanchin;
+package data.structure;
 import java.util.Arrays;
 public class Lecture{
     public class ArrayList<E> implements MyListInterface<E>{
