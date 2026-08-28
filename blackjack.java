@@ -108,6 +108,7 @@ public class blackjack{
                     board.roundStart(board.player, board.dealer);
                 }
             }
+            System.out.println("-----------------------------------------");
         }
 
         // Dealer draws cards until hand > 17
@@ -141,12 +142,14 @@ public class blackjack{
         // Dealer gets 1 card to represent the player only being able to see one of the dealer's cards during their phase
         // If player draws a 10 and an A on round start, they win
         public void roundStart(Gambler p, Gambler d){
-            playerPhase = true;
             Deck.shuffle(Deck.base);
             player.hand = Deck.draw(p) + Deck.draw(p);
             dealer.hand = Deck.draw(d);
             if (player.hand == 21){
                 playerPhase = false;
+            }
+            else{
+                playerPhase = true;
             }
         
         }
@@ -154,22 +157,19 @@ public class blackjack{
         // Handles results at end of round and ends the game when a life counters hits 0
         public void roundResults(){
             System.out.println(display());
-            if (dealer.hand > player.hand && dealer.hand < 21 || dealer.hand < player.hand && player.hand > 21){
+            if (dealer.hand > player.hand && dealer.hand <= 21 || dealer.hand < player.hand && player.hand > 21){
                 player.lives -= 1;
                 System.out.println("Dealer wins round\nPlayer loses a life" +
                                     "\n-----------------------------------------");
-                playerPhase = true;
             }
             else if (player.hand > dealer.hand && player.hand <= 21 || player.hand < dealer.hand && dealer.hand > 21){
                 dealer.lives -= 1;
                 System.out.println("Player wins round\nDealer loses a life" +
                                     "\n-----------------------------------------");
-                playerPhase = true;
             }
             else if (player.hand == dealer.hand){
                 System.out.println("Draw\nNo one loses a life" +
                                     "\n-----------------------------------------");
-                playerPhase = true;
             }
             if (dealer.lives == 0){
                 gameStatus = false;
