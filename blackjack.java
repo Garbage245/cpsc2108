@@ -142,10 +142,22 @@ public class blackjack{
         // Dealer gets 1 card to represent the player only being able to see one of the dealer's cards during their phase
         // If player draws a 10 and an A on round start, they win
         public void roundStart(Gambler p, Gambler d){
+            p.hand = 0;
+            d.hand = 0;
             Deck.shuffle(Deck.base);
-            player.hand = Deck.draw(p) + Deck.draw(p);
-            dealer.hand = Deck.draw(d);
-            if (player.hand == 21){
+            for (int i = 0; i < 2; i++){
+                int currentP = Deck.draw(p);
+                while (currentP == 0){
+                    currentP = Deck.draw(p);
+                }
+                p.hand += currentP;
+            }
+            int currentD = Deck.draw(d);
+            while (currentD == 0){
+                    currentD = Deck.draw(d);
+                }
+            d.hand += currentD;
+            if (player.hand >= 21){
                 playerPhase = false;
             }
             else{
