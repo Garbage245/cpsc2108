@@ -12,7 +12,7 @@ public class MyLinkedStack<E>{
         public void push(E element){
             if(top == null){
                 top = new Node<E>(element);
-                new Node.next = top
+                new Node.next = top;
             }
         }
 

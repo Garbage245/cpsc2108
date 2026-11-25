@@ -1,4 +1,4 @@
-public class Room {
+public class Room{
     Room forward = null;
     Room backward = null;
     Room left = null;
@@ -19,5 +19,13 @@ public class Room {
     
     public void assignDesc(){
         desc = possibleDesc[(int)(Math.random()*10)];
+    }
+    
+    public void assignSpawn(){
+        desc = "welcome, rabbit. i assume you already know what to do, so i shall leave you to it.";
+    }
+
+    public void assignPage(){
+        // add code
     }
 }
